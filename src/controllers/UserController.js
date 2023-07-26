@@ -1,6 +1,6 @@
 // Import User model, to create functionality with them
 const {User} = require("../models/UserModel");
-const { hashString, generateUserJWT, validateHashedData } = require("../services/auth_services");
+const { hashString, generateUserJWT } = require("../services/auth_services");
 
 
 
@@ -40,15 +40,7 @@ const createUser = async (request, response) => {
 // Function to log user in and return valid userJWT to client
 const loginUser = async (request, response) => {
     try {
-        let savedUser = User.findOne({email: request.body.email})
-        if (!savedUser) {
-            response.status(400).json({message: "Email does not exist, please try again"})
-        }
-
-        let validPassword = await validateHashedData(request.body.password, savedUser.password);        
-        if ( !validPassword) {
-            response.status(400).json({message: "Emails do not match, try again"});
-        }
+        let savedUser = await User.findOne({email: request.body.email})
 
         let encryptedToken = await generateUserJWT({
             userID: savedUser.id,
@@ -58,10 +50,10 @@ const loginUser = async (request, response) => {
 
         response.json({message: "successful login", token: encryptedToken})
     } catch (error) {
-        
+        response.status(400).json({message: `Something has gone wrong ${error}`})
     }
 }
 
 
 
-module.exports = {createUser};
+module.exports = {createUser, loginUser};
