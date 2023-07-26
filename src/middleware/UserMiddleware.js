@@ -1,5 +1,7 @@
 const {User} = require("../models/UserModel");
 
+const {validateHashedData} = require("../services/auth_services");
+
 // Checks all user fields have been entered for sign up and updating user
 const checkUserFields = (request, response, next) => {
     // Destructure Request Object into variables
@@ -34,8 +36,24 @@ const checkPasswordLength = (request, response, next) => {
     }
 }
 
+// Checks email and password match, used for logging in
+const loginMiddleware = async (request, response, next) => {
+    let savedUser = await User.findOne({email: request.body.email});
+
+    if (!savedUser) {
+        response.status(400).json({message: "Email does not exist, please try again"})
+    }
+
+    let validPassword = await validateHashedData(request.body.password, savedUser.password);        
+    if ( !validPassword) {
+        response.status(400).json({message: "Passwords do not match, try again"});
+    }
+
+}
+
 module.exports = {  
     checkUserFields,
     checkValidEmail,
-    checkPasswordLength
+    checkPasswordLength,
+    loginMiddleware
 };

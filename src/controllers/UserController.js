@@ -37,6 +37,23 @@ const createUser = async (request, response) => {
     })
 }
 
+// Function to log user in and return valid userJWT to client
+const loginUser = async (request, response) => {
+    try {
+        let savedUser = await User.findOne({email: request.body.email})
+
+        let encryptedToken = await generateUserJWT({
+            userID: savedUser.id,
+            username: savedUser.username,
+            email: savedUser.email 
+        })
+
+        response.json({message: "successful login", token: encryptedToken})
+    } catch (error) {
+        response.status(400).json({message: `Something has gone wrong ${error}`})
+    }
+}
 
 
-module.exports = {createUser};
+
+module.exports = {createUser, loginUser};
