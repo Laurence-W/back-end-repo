@@ -49,6 +49,8 @@ const loginMiddleware = async (request, response, next) => {
         response.status(400).json({message: "Passwords do not match, try again"});
     }
 
+    next();
+
 }
 
 module.exports = {  
