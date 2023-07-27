@@ -50,7 +50,7 @@ const loginUser = async (request, response) => {
 
         response.json({message: "successful login", token: encryptedToken})
     } catch (error) {
-        response.status(400).json({message: `Something has gone wrong ${error}`})
+        console.log(`Error occured: \n ${error}`);
     }
 }
 

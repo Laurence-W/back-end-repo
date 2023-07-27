@@ -38,19 +38,22 @@ const checkPasswordLength = (request, response, next) => {
 
 // Checks email and password match, used for logging in
 const loginMiddleware = async (request, response, next) => {
-    let savedUser = await User.findOne({email: request.body.email});
+    try {
+        let savedUser = await User.findOne({email: request.body.email});
 
-    if (!savedUser) {
-        response.status(400).json({message: "Email does not exist, please try again"})
+        if (!savedUser) {
+            return response.status(400).json({message: "Email does not exist, please try again"})
+        }
+
+        let validPassword = await validateHashedData(request.body.password, savedUser.password);        
+        if ( !validPassword) {
+            return response.status(400).json({message: "Passwords do not match, try again"});
+        }
+
+        next();
+    } catch (error) {
+        return response.status(400).json({message: `Some Error occurred: ${error}`})
     }
-
-    let validPassword = await validateHashedData(request.body.password, savedUser.password);        
-    if ( !validPassword) {
-        response.status(400).json({message: "Passwords do not match, try again"});
-    }
-
-    next();
-
 }
 
 module.exports = {  
