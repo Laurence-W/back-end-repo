@@ -74,6 +74,9 @@ app.get("/databaseHealth", (request, response) => {
 const usersRoutes = require("./routes/UserRoutes");
 app.use("/users", usersRoutes);
 
+const eventRoutes = require("./routes/EventRoutes");
+app.use("/events", eventRoutes);
+
 app.get("/", (request, response) => {
   response.json({
     message: "Hello world!",
