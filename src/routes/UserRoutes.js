@@ -4,12 +4,13 @@ const router = express.Router();
 const {createUser, loginUser, getUser} = require("../controllers/UserController");
 // Middleware Imports
 const { checkUserFields, checkValidEmail, checkPasswordLength, loginMiddleware } = require("../middleware/UserMiddleware");
+const { destructureToken } = require("../middleware/AuthMiddleware")
 
 // Router to get all users, only admin can access this route
 router.get("/all") 
 
 // Router to get single user based from USER_ID from JWT sent in request headers
-router.get("/user/:id", getUser)
+router.get("/user/", destructureToken, getUser)
 
 // Route for user signup
 router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, createUser);

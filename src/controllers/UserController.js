@@ -6,7 +6,7 @@ const { hashString, generateUserJWT } = require("../services/auth_services");
 // Code will take authorization headers of JWT and match with ID within database
 const getUser = async (request, response) => {
     try {
-        let user = await User.findOne({_id: request.params.id}).exec();
+        let user = await User.findOne({_id: request.userID}).exec();
 
         response.status(200).json({
             firstName: user.firstName,

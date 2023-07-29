@@ -56,6 +56,7 @@ const loginMiddleware = async (request, response, next) => {
     }
 }
 
+
 module.exports = {  
     checkUserFields,
     checkValidEmail,

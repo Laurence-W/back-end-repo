@@ -68,7 +68,7 @@ async function verifyUserJWT(userJWT){
     let userData = JSON.parse(decryptedJwtPayload);
     let targetUser = await User.findById(userData.userID).exec();
 
-    if (targetUser.password === userData.password && targetUser.email === userData.email){
+    if (targetUser.username === userData.username && targetUser.email === userData.email){
         return generateJWT({data: userJwtVerified.payload.data});
     } else {
         throw new Error({message: "Invalid User Token"})
