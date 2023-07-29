@@ -2,7 +2,26 @@
 const {User} = require("../models/UserModel");
 const { hashString, generateUserJWT } = require("../services/auth_services");
 
+// Function to fetch user details from database
+// Code will take authorization headers of JWT and match with ID within database
+const getUser = async (request, response) => {
+    try {
+        let user = await User.findOne({_id: request.params.id}).exec();
 
+        response.status(200).json({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+            email: user.email
+        })
+    } catch(error) {
+        console.log(error)
+        response.status(400).json({
+            message: "Error occurred while fetching user"
+        })
+    }
+    
+}
 
 
 
@@ -40,7 +59,7 @@ const createUser = async (request, response) => {
 // Function to log user in and return valid userJWT to client
 const loginUser = async (request, response) => {
     try {
-        let savedUser = await User.findOne({email: request.body.email})
+        let savedUser = await User.findOne({email: request.body.email}).exec()
 
         let encryptedToken = await generateUserJWT({
             userID: savedUser.id,
@@ -55,5 +74,18 @@ const loginUser = async (request, response) => {
 }
 
 
+// Function to allow user to update their details
+const editUser = async (request, response) => {
+    // Overall design of function (Including Middleware parts),
+    // Route takes users request header for authorization and 
+    // Checks that user is authorized to make request, 
+    // 2 functions? Send user details to front end for display on 
+    // Edit profile form
+    // Take edited details (any non edits will stay the same)
+    // Return success response and new valid token
+    // Is this then 2 routes, one get request with a post request 
 
-module.exports = {createUser, loginUser};
+}
+
+
+module.exports = { getUser, createUser, loginUser};
