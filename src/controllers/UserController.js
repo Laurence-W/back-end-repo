@@ -2,6 +2,9 @@
 const {User} = require("../models/UserModel");
 const { hashString, generateUserJWT } = require("../services/auth_services");
 
+
+// ---- Regular and Trainer Controllers -----
+
 // Function to fetch user details from database
 // code takes the decoded userId from the JWT and uses that to 
 // find the user details of the valid user.
@@ -23,21 +26,6 @@ const getUser = async (request, response) => {
     }
     
 }
-
-// Function for admin to see full list of users from the database
-// Middleware implemented to ensure user accessing user collection is admin
-const getAllUsers = async (request, response) => {
-    try {
-        let userList = await User.find({}).exec();
-
-        response.json(userList);
-    } catch (error) {
-        console.log(`Error occurred within route: \n ${error}`)
-        response.status(400).json({message: "Error occurred while fetching data"})
-    }
-    
-}
-
 
 // Sign up function 
 const createUser = async (request, response) => {
@@ -143,7 +131,47 @@ const deleteAccount = async (request, response) => {
 }
 
 
+// ----- Admin Controllers --------
+
+// Function for admin to see full list of users from the database
+// Middleware implemented to ensure user accessing user collection is admin
+const getAllUsers = async (request, response) => {
+    try {
+        let userList = await User.find({}).exec();
+
+        response.json(userList);
+    } catch (error) {
+        console.log(`Error occurred within route: \n ${error}`)
+        response.status(400).json({message: "Error occurred while fetching data"})
+    }
+    
+}
+
+// Function to allow Admin User to change user from being a regular user to a trainer user
+// Or a trainer user to a regular user
+// Function takes parameter of user and depending on the users status, changes it to the opposite.
+const changeUserStatus = async (request, response) => {
+    try {
+        
+        let user = await User.findOne({username: request.params.username}).exec();
+        
+
+        if (user.isTrainer === true) {
+            user = await User.findByIdAndUpdate(user._id, {isTrainer: false}, {returnDocument: "after"}).exec();
+            response.status(200).json({message: "Changed user status", isTrainer: user.isTrainer })
+        } else {
+            user = await User.findByIdAndUpdate(user._id, {isTrainer: true}, {returnDocument: "after"}).exec();
+            response.status(200).json({message: "Changed user status", isTrainer: user.isTrainer})
+        }
+
+    } catch(error) {
+        console.log("Error occurred: \n" + error);
+        response.status(400).json({message: "Bad request"})
+    }
+}
+
 module.exports = {
         getUser, createUser, loginUser,
-        getAllUsers, editUser, deleteAccount
+        getAllUsers, editUser, deleteAccount,
+        changeUserStatus
     };
