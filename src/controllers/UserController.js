@@ -104,7 +104,22 @@ const editUser = async (request, response) => {
 
         let updatedUser = await User.findByIdAndUpdate(request.userID, request.body, {returnDocument: "after"}).exec();
 
-        response.status(200).json(updatedUser);
+        let newToken = await generateUserJWT({
+            userID: updatedUser.id,
+            username: updatedUser.username,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+            isTrainer: updatedUser.isTrainer
+        })
+
+        let savedUser = {
+            firstName: updatedUser.firstName,
+            lastName: updatedUser.lastName,
+            username: updatedUser.username,
+            email: updatedUser.email
+        }
+
+        response.status(200).json({userData: savedUser, token: newToken});
     } catch (error) {
         console.log(error);
         response.status(400).json({message: "Error occurred, check console for further details"})
