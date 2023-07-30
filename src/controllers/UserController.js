@@ -95,6 +95,13 @@ const loginUser = async (request, response) => {
 // Function to allow user to update their details
 const editUser = async (request, response) => {
     try{
+
+        if(request.body.password) {
+            let hashedPassword = await hashString(request.body.password);
+            request.body.password = hashedPassword;
+        }
+
+
         let updatedUser = await User.findByIdAndUpdate(request.userID, request.body, {returnDocument: "after"}).exec();
 
         response.status(200).json(updatedUser);
@@ -102,8 +109,6 @@ const editUser = async (request, response) => {
         console.log(error);
         response.status(400).json({message: "Error occurred, check console for further details"})
     }
-    
-
         
 }
 
