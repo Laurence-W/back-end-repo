@@ -39,7 +39,7 @@ const checkPasswordLength = (request, response, next) => {
 // Checks email and password match, used for logging in
 const loginMiddleware = async (request, response, next) => {
     try {
-        let savedUser = await User.findOne({email: request.body.email});
+        let savedUser = await User.findOne({email: request.body.email}).exec();
 
         if (!savedUser) {
             return response.status(400).json({message: "Email does not exist, please try again"})

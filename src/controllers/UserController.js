@@ -3,7 +3,8 @@ const {User} = require("../models/UserModel");
 const { hashString, generateUserJWT } = require("../services/auth_services");
 
 // Function to fetch user details from database
-// Code will take authorization headers of JWT and match with ID within database
+// code takes the decoded userId from the JWT and uses that to 
+// find the user details of the valid user.
 const getUser = async (request, response) => {
     try {
         let user = await User.findOne({_id: request.userID}).exec();
@@ -23,12 +24,19 @@ const getUser = async (request, response) => {
     
 }
 
+// Function for admin to see full list of users from the database
+// Middleware implemented to ensure user accessing user collection is admin
 const getAllUsers = async (request, response) => {
-    let userList = await User.find({});
+    try {
+        let userList = await User.find({}).exec();
 
-    response.json(userList);
+        response.json(userList);
+    } catch (error) {
+        console.log(`Error occurred within route: \n ${error}`)
+        response.status(400).json({message: "Error occurred while fetching data"})
+    }
+    
 }
-
 
 
 // Sign up function 
@@ -51,7 +59,9 @@ const createUser = async (request, response) => {
     let encryptedToken = await generateUserJWT({
         userID: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isTrainer: user.isTrainer
     });
 
     await user.save().then((user) => {
@@ -70,7 +80,9 @@ const loginUser = async (request, response) => {
         let encryptedToken = await generateUserJWT({
             userID: savedUser.id,
             username: savedUser.username,
-            email: savedUser.email 
+            email: savedUser.email,
+            isAdmin: savedUser.isAdmin,
+            isTrainer: savedUser.isTrainer 
         })
 
         response.json({message: "successful login", token: encryptedToken})
