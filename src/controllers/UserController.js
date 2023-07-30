@@ -94,19 +94,21 @@ const loginUser = async (request, response) => {
 
 // Function to allow user to update their details
 const editUser = async (request, response) => {
-    // Overall design of function (Including Middleware parts),
-    // Route takes users request header for authorization and 
-    // Checks that user is authorized to make request, 
-    // 2 functions? Send user details to front end for display on 
-    // Edit profile form
-    // Take edited details (any non edits will stay the same)
-    // Return success response and new valid token
-    // Is this then 2 routes, one get request with a post request 
+    try{
+        let updatedUser = await User.findByIdAndUpdate(request.userID, request.body, {returnDocument: "after"}).exec();
 
+        response.status(200).json(updatedUser);
+    } catch (error) {
+        console.log(error);
+        response.status(400).json({message: "Error occurred, check console for further details"})
+    }
+    
+
+        
 }
 
 
 module.exports = {
         getUser, createUser, loginUser,
-        getAllUsers
+        getAllUsers, editUser
     };

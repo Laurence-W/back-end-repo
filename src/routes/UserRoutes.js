@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 // Import functions from userControllers here
-const {createUser, loginUser, getUser, getAllUsers} = require("../controllers/UserController");
+const {createUser, loginUser, getUser, getAllUsers, editUser} = require("../controllers/UserController");
 // User Middleware Imports
 const {
     checkUserFields, checkValidEmail, checkPasswordLength,
@@ -26,6 +26,6 @@ router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, cr
 router.post("/login", loginMiddleware, loginUser);
 
 // Route for user to edit their details
-// router.put("/edit-user", editUser);
+router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, editUser);
 
 module.exports = router;
