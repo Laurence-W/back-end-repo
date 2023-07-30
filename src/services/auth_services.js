@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// Import user model
+const {User} = require("../models/UserModel");
+
 // ----- encryption and decryption -------
 
 let encAlgorithm = 'aes-256-cbc';

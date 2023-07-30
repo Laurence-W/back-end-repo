@@ -3,33 +3,55 @@ const jwt = require('jsonwebtoken');
 
 
 const verifyAndValidateUserJWT = async (request, response, next) => {
+    try {
+        let token = request.headers.authorization
+        if (!token){
+            throw new Error("Missing authorization headers")
+        }
+        let splitToken = token.split(" ")[1];
 
-    let newToken = verifyUserJWT(request.headers.jwt);
+        let newToken = await verifyUserJWT(splitToken);
+        
 
-    request.token = newToken;
+        request.token = newToken;
 
-    next();
+        next();
+    } catch (error) {
+        console.log(error);
+        response.status(400).json({message: "Error with validation"})
+    }
+    
 
 }
 
-const destructureToken = async (request, response, next) => {
+const extractUserId = async (request, response, next) => {
 
-    let suppliedToken = request.headers.authorization;
-    let token = suppliedToken.split(" ")[1];
-    let userJWTverified = jwt.verify(token, process.env.JWT_SECRET, {complete: true});
-    let decodedJwt = decryptString(userJWTverified.payload.data);
-    let userData = JSON.parse(decodedJwt);
+    try{
+        let suppliedToken = request.headers.authorization;
+        if (!suppliedToken) {
+            throw new Error("Incorrect Authorization header or no header supplied");
+        }
 
-    console.log(userData)
+        let token = suppliedToken.split(" ")[1];
+        let userJWTverified = jwt.verify(token, process.env.JWT_SECRET, {complete: true});
+        let decodedJwt = decryptString(userJWTverified.payload.data);
+        let userData = JSON.parse(decodedJwt);
 
-    request.userID = userData.userID;
+        request.userID = userData.userID;
 
-    next();
+        next();
+    } catch (error) {
+        console.log(error.message)
+        response.status(400).json({message: "Error occurred with validation/authorization"})
+    }
+    
+
+    
 
 }
 
 
 module.exports = {
-    destructureToken,
+    extractUserId,
     verifyAndValidateUserJWT
 }

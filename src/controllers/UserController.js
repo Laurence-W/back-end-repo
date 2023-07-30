@@ -23,6 +23,12 @@ const getUser = async (request, response) => {
     
 }
 
+const getAllUsers = async (request, response) => {
+    let userList = await User.find({});
+
+    response.json(userList);
+}
+
 
 
 // Sign up function 
@@ -88,4 +94,7 @@ const editUser = async (request, response) => {
 }
 
 
-module.exports = { getUser, createUser, loginUser};
+module.exports = {
+        getUser, createUser, loginUser,
+        getAllUsers
+    };

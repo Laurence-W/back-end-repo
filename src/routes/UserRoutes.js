@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
 // Import functions from userControllers here
-const {createUser, loginUser, getUser} = require("../controllers/UserController");
+const {createUser, loginUser, getUser, getAllUsers} = require("../controllers/UserController");
 // Middleware Imports
 const { checkUserFields, checkValidEmail, checkPasswordLength, loginMiddleware } = require("../middleware/UserMiddleware");
-const { destructureToken } = require("../middleware/AuthMiddleware")
+const { extractUserId, verifyAndValidateUserJWT } = require("../middleware/AuthMiddleware")
 
 // Router to get all users, only admin can access this route
-router.get("/all") 
+router.get("/all", verifyAndValidateUserJWT, getAllUsers) 
 
 // Router to get single user based from USER_ID from JWT sent in request headers
-router.get("/user/", destructureToken, getUser)
+router.get("/user/", extractUserId, getUser)
 
 // Route for user signup
 router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, createUser);
