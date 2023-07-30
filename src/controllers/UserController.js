@@ -2,8 +2,41 @@
 const {User} = require("../models/UserModel");
 const { hashString, generateUserJWT } = require("../services/auth_services");
 
+// Function to fetch user details from database
+// code takes the decoded userId from the JWT and uses that to 
+// find the user details of the valid user.
+const getUser = async (request, response) => {
+    try {
+        let user = await User.findOne({_id: request.userID}).exec();
 
+        response.status(200).json({
+            firstName: user.firstName,
+            lastName: user.lastName,
+            username: user.username,
+            email: user.email
+        })
+    } catch(error) {
+        console.log(error)
+        response.status(400).json({
+            message: "Error occurred while fetching user"
+        })
+    }
+    
+}
 
+// Function for admin to see full list of users from the database
+// Middleware implemented to ensure user accessing user collection is admin
+const getAllUsers = async (request, response) => {
+    try {
+        let userList = await User.find({}).exec();
+
+        response.json(userList);
+    } catch (error) {
+        console.log(`Error occurred within route: \n ${error}`)
+        response.status(400).json({message: "Error occurred while fetching data"})
+    }
+    
+}
 
 
 // Sign up function 
@@ -26,7 +59,9 @@ const createUser = async (request, response) => {
     let encryptedToken = await generateUserJWT({
         userID: user.id,
         username: user.username,
-        email: user.email
+        email: user.email,
+        isAdmin: user.isAdmin,
+        isTrainer: user.isTrainer
     });
 
     await user.save().then((user) => {
@@ -40,12 +75,14 @@ const createUser = async (request, response) => {
 // Function to log user in and return valid userJWT to client
 const loginUser = async (request, response) => {
     try {
-        let savedUser = await User.findOne({email: request.body.email})
+        let savedUser = await User.findOne({email: request.body.email}).exec()
 
         let encryptedToken = await generateUserJWT({
             userID: savedUser.id,
             username: savedUser.username,
-            email: savedUser.email 
+            email: savedUser.email,
+            isAdmin: savedUser.isAdmin,
+            isTrainer: savedUser.isTrainer 
         })
 
         response.json({message: "successful login", token: encryptedToken})
@@ -55,5 +92,23 @@ const loginUser = async (request, response) => {
 }
 
 
+// Function to allow user to update their details
+const editUser = async (request, response) => {
+    try{
+        let updatedUser = await User.findByIdAndUpdate(request.userID, request.body, {returnDocument: "after"}).exec();
 
-module.exports = {createUser, loginUser};
+        response.status(200).json(updatedUser);
+    } catch (error) {
+        console.log(error);
+        response.status(400).json({message: "Error occurred, check console for further details"})
+    }
+    
+
+        
+}
+
+
+module.exports = {
+        getUser, createUser, loginUser,
+        getAllUsers, editUser
+    };

@@ -6,6 +6,9 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// Import user model
+const {User} = require("../models/UserModel");
+
 // ----- encryption and decryption -------
 
 let encAlgorithm = 'aes-256-cbc';
@@ -68,7 +71,7 @@ async function verifyUserJWT(userJWT){
     let userData = JSON.parse(decryptedJwtPayload);
     let targetUser = await User.findById(userData.userID).exec();
 
-    if (targetUser.password === userData.password && targetUser.email === userData.email){
+    if (targetUser.username === userData.username && targetUser.email === userData.email){
         return generateJWT({data: userJwtVerified.payload.data});
     } else {
         throw new Error({message: "Invalid User Token"})
