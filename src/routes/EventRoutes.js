@@ -7,8 +7,35 @@ const { Event } = require("../models/EventModel");
 // See all events, only admin should have this.
 eventsRouter.get("/", async (req, res) => {
   try {
-    const result = await Event.find({});
+    const result = await Event.find({}).sort({ date: 1 });
     res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// See only future events
+eventsRouter.get("/users", async (req, res) => {
+  try {
+    const result = await Event.find({
+      date: { $gt: new Date(Date.now()) },
+    }).sort({ date: 1 });
+    res.status(200).json(result);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// return the details for a single event
+eventsRouter.get("/by-id/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json(`No event found with id: ${id}`);
+    }
+
+    res.status(200).json(event);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -42,6 +69,40 @@ eventsRouter.post("/", async (req, res) => {
         _id: result._id,
       },
     });
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+// edit a single event
+eventsRouter.put("/change-event/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findById(id);
+    event.name = req.body.name;
+    event.location = req.body.location;
+    event.date = req.body.date;
+    event.time = req.body.time;
+    event.distance = req.body.distance;
+    event.difficulty = req.body.difficulty;
+    event.trainer = req.body.trainer;
+    await event.save();
+    res.send({ message: "Event Updated" });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+// for admin/trainer to remove an event
+eventsRouter.delete("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const event = await Event.findByIdAndDelete(id);
+    if (!event) {
+      return res.status(404).json(`No event found with id: ${id}`);
+    }
+
+    res.status(200).send("Event deleted");
   } catch (err) {
     res.status(500).json(err);
   }
