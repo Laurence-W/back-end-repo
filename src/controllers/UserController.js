@@ -96,6 +96,7 @@ const loginUser = async (request, response) => {
 const editUser = async (request, response) => {
     try{
 
+        // If password is present in request body, hash the new password and update the request body
         if(request.body.password) {
             let hashedPassword = await hashString(request.body.password);
             request.body.password = hashedPassword;
@@ -127,8 +128,22 @@ const editUser = async (request, response) => {
         
 }
 
+// Delete profile from database
+const deleteAccount = async (request, response) => {
+    try {
+        let removedUser = await User.findByIdAndDelete(request.userID).exec();
+        if (!removedUser) {
+            response.status(404).json({message: "User not found"})
+        }
+        response.status(200).json({message: "Sorry to see you leave!"})
+    } catch (error) {
+        console.log(error);
+        response.status(400).json({message: "Error occurred, check console for further details"})
+    }
+}
+
 
 module.exports = {
         getUser, createUser, loginUser,
-        getAllUsers, editUser
+        getAllUsers, editUser, deleteAccount
     };

@@ -14,7 +14,6 @@ const verifyAndValidateUserJWT = async (request, response, next) => {
         
         request.splitToken = splitToken;
         request.token = newToken;
-        console.log(newToken)
 
         next();
     } catch (error) {
