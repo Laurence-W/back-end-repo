@@ -34,7 +34,7 @@ router.post("/login", loginMiddleware, loginUser);
 router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, editUser);
 
 // Route for admin user to change userStatus
-router.put("/admin/edit-status/:username", changeUserStatus);
+router.put("/admin/edit-status/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, changeUserStatus);
 
 // Route for user to delete their account
 router.delete("/delete-account", verifyAndValidateUserJWT, extractJwtData, deleteAccount);

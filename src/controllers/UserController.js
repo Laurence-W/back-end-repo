@@ -154,14 +154,17 @@ const changeUserStatus = async (request, response) => {
     try {
         
         let user = await User.findOne({username: request.params.username}).exec();
+        if (!user) {
+            return response.status(404).json({message: "User not found, check username"})
+        }
         
 
         if (user.isTrainer === true) {
             user = await User.findByIdAndUpdate(user._id, {isTrainer: false}, {returnDocument: "after"}).exec();
-            response.status(200).json({message: "Changed user status", isTrainer: user.isTrainer })
+            response.status(200).json({message: "Changed user status", isTrainer: user.isTrainer, token: request.token })
         } else {
             user = await User.findByIdAndUpdate(user._id, {isTrainer: true}, {returnDocument: "after"}).exec();
-            response.status(200).json({message: "Changed user status", isTrainer: user.isTrainer})
+            response.status(200).json({message: "Changed user status", isTrainer: user.isTrainer, token: request.token})
         }
 
     } catch(error) {
