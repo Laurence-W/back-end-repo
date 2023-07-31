@@ -4,7 +4,7 @@ const router = express.Router();
 // Import functions from userControllers here
 const {
     createUser, loginUser, getUser, 
-    getAllUsers, editUser, deleteAccount, changeUserStatus
+    getAllUsers, editUser, deleteAccount, changeUserStatus, adminDeleteUser
 } = require("../controllers/UserController");
 
 // User Middleware Imports
@@ -38,5 +38,8 @@ router.put("/admin/edit-status/:username", verifyAndValidateUserJWT, extractJwtD
 
 // Route for user to delete their account
 router.delete("/delete-account", verifyAndValidateUserJWT, extractJwtData, deleteAccount);
+
+// Route for removal of user via Admin
+router.delete("/admin/remove-account/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, adminDeleteUser)
 
 module.exports = router;

@@ -121,7 +121,7 @@ const deleteAccount = async (request, response) => {
     try {
         let removedUser = await User.findByIdAndDelete(request.userID).exec();
         if (!removedUser) {
-            response.status(404).json({message: "User not found"})
+            return response.status(404).json({message: "User not found"})
         }
         response.status(200).json({message: "Sorry to see you leave!"})
     } catch (error) {
@@ -173,8 +173,25 @@ const changeUserStatus = async (request, response) => {
     }
 }
 
+// function to allow Admin user to remove user from database
+const adminDeleteUser = async (request, response) => {
+    try {
+        if (request.isAdmin) {
+            let removedUser = await User.findOneAndDelete({username: request.params.username}).exec();
+            if (!removedUser) {
+                return response.status(404).json({message: "User not found, check username"});
+            }
+            return response.status(200).json({message: "User removed"});
+        }
+    } catch (error) {
+        console.log("Error occurred: \n" + error);
+        response.status(400).json({message: "Bad request"})
+    }
+}
+
+
 module.exports = {
         getUser, createUser, loginUser,
         getAllUsers, editUser, deleteAccount,
-        changeUserStatus
+        changeUserStatus, adminDeleteUser
     };
