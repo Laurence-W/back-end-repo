@@ -12,7 +12,7 @@ const verifyAndValidateUserJWT = async (request, response, next) => {
 
         let newToken = await verifyUserJWT(splitToken);
         
-        request.splitToken = splitToken
+        request.splitToken = splitToken;
         request.token = newToken;
 
         next();
@@ -50,16 +50,13 @@ const extractJwtData = async (request, response, next) => {
 
 // Middleware to check if user is admin, to allow for admin protected routes
 const checkAdminStatus = async (request, response, next) => {
-    try {
-        let status = request.isAdmin;
-        if (status !== true) {
-            throw new Error("isAdmin in request is returning false")
-        }
-        next ();
-    } catch (error) {
-        console.log(error)
-        response.status(401).json({message: "Unauthorized access sorry"})
+    
+    let status = request.isAdmin;
+    if (status !== true) {
+        return response.status(401).json({message: "Unauthorized access sorry"})
     }
+    next ();
+    
 }
 
 module.exports = {

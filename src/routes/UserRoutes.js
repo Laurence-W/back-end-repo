@@ -1,12 +1,18 @@
 const express = require("express");
 const router = express.Router();
+
 // Import functions from userControllers here
-const {createUser, loginUser, getUser, getAllUsers, editUser} = require("../controllers/UserController");
+const {
+    createUser, loginUser, getUser, 
+    getAllUsers, editUser, deleteAccount, changeUserStatus, adminDeleteUser
+} = require("../controllers/UserController");
+
 // User Middleware Imports
 const {
     checkUserFields, checkValidEmail, checkPasswordLength,
     loginMiddleware
 } = require("../middleware/UserMiddleware");
+
 // Auth Middleware imports
 const {
     extractJwtData, verifyAndValidateUserJWT, checkAdminStatus
@@ -21,11 +27,19 @@ router.get("/user/", verifyAndValidateUserJWT, extractJwtData, getUser)
 // Route for user signup
 router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, createUser);
 
-
 // Route for user login
 router.post("/login", loginMiddleware, loginUser);
 
 // Route for user to edit their details
 router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, editUser);
+
+// Route for admin user to change userStatus
+router.put("/admin/edit-status/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, changeUserStatus);
+
+// Route for user to delete their account
+router.delete("/delete-account", verifyAndValidateUserJWT, extractJwtData, deleteAccount);
+
+// Route for removal of user via Admin
+router.delete("/admin/remove-account/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, adminDeleteUser)
 
 module.exports = router;
