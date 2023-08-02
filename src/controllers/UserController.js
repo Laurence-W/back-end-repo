@@ -73,9 +73,10 @@ const loginUser = async (request, response) => {
             isTrainer: savedUser.isTrainer 
         })
 
-        response.json({message: "successful login", token: encryptedToken})
+        response.status(200).json({message: "successful login", token: encryptedToken})
     } catch (error) {
-        console.log(`Error occured: \n ${error}`);
+        console.log(`Error occurred: \n ${error}`);
+        throw error;
     }
 }
 
@@ -142,7 +143,7 @@ const getAllUsers = async (request, response) => {
         response.json(userList);
     } catch (error) {
         console.log(`Error occurred within route: \n ${error}`)
-        response.status(400).json({message: "Error occurred while fetching data"})
+        // response.status(400).json({message: "Error occurred while fetching data"})
     }
     
 }

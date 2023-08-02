@@ -9,7 +9,9 @@ const checkUserFields = (request, response, next) => {
     
     // Conditional to ensure each variable has data
     if (!firstName || !lastName || !username || !email || !password) {
-        return response.status(400).json({message: "Please enter in all fields"});
+        let error = new Error("Not all fields are entered correctly");
+        error.statusCode = 400;
+        next(error);
     } else {
         next();
     }
@@ -21,7 +23,9 @@ const checkValidEmail = async (request, response, next) => {
     let savedUser = await User.findOne({email: request.body.email});
     // Conditional to check if a user is found within the database, return error
     if (savedUser) {
-        return response.status(422).json({message: "User already exists with email"});
+        let error = new Error("Invalid Email, please enter a valid email");
+        error.statusCode = 400;
+        next(error)
     } else {
         next();
     }
@@ -30,7 +34,9 @@ const checkValidEmail = async (request, response, next) => {
 // Password Validation ensuring password length is above 8 characters
 const checkPasswordLength = (request, response, next) => {
     if (request.body.password.length < 8) {
-        return response.status(400).json({message: "Password length is too short, enter 8 or more characters"});
+        let error = new Error("Password too short, please enter 8 characters or more");
+        error.statusCode = 400;
+        next(error);
     } else {
         next();
     }
@@ -38,21 +44,20 @@ const checkPasswordLength = (request, response, next) => {
 
 // Checks email and password match, used for logging in
 const loginMiddleware = async (request, response, next) => {
-    try {
-        let savedUser = await User.findOne({email: request.body.email}).exec();
+    let savedUser = await User.findOne({email: request.body.email}).exec();
 
-        if (!savedUser) {
-            return response.status(400).json({message: "Email does not exist, please try again"})
-        }
-
+    if (!savedUser) {
+        let error = new Error("Invalid Email");
+        error.statusCode = 400;
+        next(error);
+    } else {
         let validPassword = await validateHashedData(request.body.password, savedUser.password);        
         if ( !validPassword) {
-            return response.status(400).json({message: "Passwords do not match, try again"});
+            let error = new Error("Password does not match, please try again");
+            error.statusCode = 400;
+            next(error)
         }
-
         next();
-    } catch (error) {
-        return response.status(400).json({message: `Some Error occurred: ${error}`})
     }
 }
 
