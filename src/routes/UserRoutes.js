@@ -16,30 +16,31 @@ const {
 // Auth Middleware imports
 const {
     extractJwtData, verifyAndValidateUserJWT, checkAdminStatus
-} = require("../middleware/AuthMiddleware")
+} = require("../middleware/AuthMiddleware");
+const { handleErrors } = require("../middleware/ErrorHandler");
 
 // Router to get all users, only admin can access this route
-router.get("/all", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, getAllUsers) 
+router.get("/all", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, handleErrors, getAllUsers) 
 
 // Router to get single user based from USER_ID from JWT sent in request headers
-router.get("/user/", verifyAndValidateUserJWT, extractJwtData, getUser)
+router.get("/user/", verifyAndValidateUserJWT, extractJwtData, handleErrors, getUser)
 
 // Route for user signup
-router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, createUser);
+router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, handleErrors, createUser);
 
 // Route for user login
-router.post("/login", loginMiddleware, loginUser);
+router.post("/login", loginMiddleware, handleErrors, handleErrors, loginUser);
 
 // Route for user to edit their details
-router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, editUser);
+router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, handleErrors, editUser);
 
 // Route for admin user to change userStatus
-router.put("/admin/edit-status/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, changeUserStatus);
+router.put("/admin/edit-status/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, handleErrors, changeUserStatus);
 
 // Route for user to delete their account
-router.delete("/delete-account", verifyAndValidateUserJWT, extractJwtData, deleteAccount);
+router.delete("/delete-account", verifyAndValidateUserJWT, extractJwtData, handleErrors, deleteAccount);
 
 // Route for removal of user via Admin
-router.delete("/admin/remove-account/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, adminDeleteUser)
+router.delete("/admin/remove-account/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, handleErrors, adminDeleteUser)
 
 module.exports = router;

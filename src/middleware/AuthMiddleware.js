@@ -1,13 +1,16 @@
 const { verifyUserJWT, decryptString } = require("../services/auth_services");
 const jwt = require('jsonwebtoken');
 
-
+// Verifies supplied user JWT and returns new token for client use
+// Error catches if no token is sent, handled through error handlers
+// Splits token to send through to next step in middleware functions if needed for use
 const verifyAndValidateUserJWT = async (request, response, next) => {
-    try {
-        let token = request.headers.authorization
-        if (!token){
-            throw new Error("Missing authorization headers")
-        }
+    let token = request.headers.authorization
+    if (!token){
+        let error = new Error("No Authorization headers sent");
+        error.statusCode = 400;
+        next(error)
+    } else {
         let splitToken = token.split(" ")[1];
 
         let newToken = await verifyUserJWT(splitToken);
@@ -16,22 +19,20 @@ const verifyAndValidateUserJWT = async (request, response, next) => {
         request.token = newToken;
 
         next();
-    } catch (error) {
-        console.log(error);
-        response.status(400).json({message: "Error with validation"})
     }
-    
-
 }
 
+// Takes split token from request, and extracts JWT data 
+// Giving controllers access to userID, admin and trainer status
+// Extra precaution for error handling to confirm split token is supplied
 const extractJwtData = async (request, response, next) => {
 
-    try{
-        let suppliedToken = request.splitToken;
-        if (!suppliedToken) {
-            throw new Error("Incorrect Authorization header or no header supplied");
-        }
-
+    let suppliedToken = request.splitToken;
+    if (!suppliedToken) {
+        let error = new Error("Error within split token");
+        error.statusCode = 500;
+        next(error)
+    } else {
         let userJWTverified = jwt.verify(suppliedToken, process.env.JWT_SECRET, {complete: true});
         let decodedJwt = decryptString(userJWTverified.payload.data);
         let userData = JSON.parse(decodedJwt);
@@ -41,11 +42,7 @@ const extractJwtData = async (request, response, next) => {
         request.isTrainer = userData.isTrainer;
 
         next();
-    } catch (error) {
-        console.log(error.message)
-        response.status(400).json({message: "Error occurred with validation/authorization"})
     }
-    
 }
 
 // Middleware to check if user is admin, to allow for admin protected routes
@@ -53,9 +50,13 @@ const checkAdminStatus = async (request, response, next) => {
     
     let status = request.isAdmin;
     if (status !== true) {
-        return response.status(401).json({message: "Unauthorized access sorry"})
+        let error = new Error("Unauthorized access");
+        error.statusCode = 401;
+        next(error);
+    } else {
+        next (); 
     }
-    next ();
+    
     
 }
 

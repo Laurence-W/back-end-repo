@@ -9,6 +9,7 @@ const { Event } = require("./models/EventModel");
 const dotenv = require("dotenv");
 dotenv.config();
 
+const { hashString } = require("./services/auth_services");
 // Add data to Users collection, using schema
 const users = [
   {
@@ -155,6 +156,11 @@ databaseConnector(databaseURL)
     }
   })
   .then(async () => {
+
+    for (const user of users) {
+      user.password = await hashString(user.password);
+    }
+
     // Save the users to the database.
     let usersCreated = await User.insertMany(users);
 

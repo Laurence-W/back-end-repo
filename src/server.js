@@ -26,6 +26,8 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
+
 const mongoose = require("mongoose");
 var databaseURL = "";
 switch (process.env.NODE_ENV.toLowerCase()) {
@@ -76,6 +78,19 @@ app.use("/users", usersRoutes);
 
 const eventRoutes = require("./routes/EventRoutes");
 app.use("/events", eventRoutes);
+
+app.use((error, request, response, next) => {
+  let importantInformation = {
+    url: request.originalURL,
+    params: request.params,
+    verb: request.method,
+    host: request.hostname,
+    ip: request.ip
+  };
+
+  console.log("Request received: \n" + JSON.stringify(importantInformation, null, 4));
+  response.status(error.statusCode).json(error.message);
+})
 
 app.get("/", (request, response) => {
   response.json({
