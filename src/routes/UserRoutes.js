@@ -10,7 +10,8 @@ const {
 // User Middleware Imports
 const {
     checkUserFields, checkValidEmail, checkPasswordLength,
-    loginMiddleware
+    loginMiddleware,
+    updatePasswordCheck
 } = require("../middleware/UserMiddleware");
 
 // Auth Middleware imports
@@ -32,7 +33,7 @@ router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, ha
 router.post("/login", loginMiddleware, handleErrors, loginUser);
 
 // Route for user to edit their details
-router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, handleErrors, editUser);
+router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, updatePasswordCheck, handleErrors, editUser);
 
 // Route for admin user to change userStatus
 router.put("/admin/edit-status/:username", verifyAndValidateUserJWT, extractJwtData, checkAdminStatus, handleErrors, changeUserStatus);
