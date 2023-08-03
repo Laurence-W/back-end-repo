@@ -73,7 +73,7 @@ const loginUser = async (request, response) => {
             isTrainer: savedUser.isTrainer 
         })
 
-        response.status(200).json({message: "successful login", token: encryptedToken})
+        response.status(200).json({message: "successful login", token: encryptedToken, trainer: savedUser.isTrainer, admin: savedUser.isAdmin})
     } catch (error) {
         console.log(`Error occurred: \n ${error}`);
         throw error;

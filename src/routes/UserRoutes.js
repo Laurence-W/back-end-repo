@@ -29,7 +29,7 @@ router.get("/user/", verifyAndValidateUserJWT, extractJwtData, handleErrors, get
 router.post("/signup", checkUserFields, checkValidEmail, checkPasswordLength, handleErrors, createUser);
 
 // Route for user login
-router.post("/login", loginMiddleware, handleErrors, handleErrors, loginUser);
+router.post("/login", loginMiddleware, handleErrors, loginUser);
 
 // Route for user to edit their details
 router.put("/edit-user", verifyAndValidateUserJWT, extractJwtData, handleErrors, editUser);
