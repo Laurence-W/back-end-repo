@@ -75,7 +75,6 @@ const events = [
     name: "Afternoon Jog",
     location: "Beach Path",
     date: "2023-07-21",
-    time: "16:00",
     distance: "3.5",
     difficulty: "Medium",
     trainer: null,
@@ -84,7 +83,6 @@ const events = [
     name: "Morning Marathon",
     location: "Beach Path",
     date: "2023-07-28",
-    time: "13:00",
     distance: "42",
     difficulty: "Hard",
     trainer: null,
@@ -93,7 +91,6 @@ const events = [
     name: "Saturday Run",
     location: "Beach Path",
     date: "2023-08-19",
-    time: "17:00",
     distance: "4",
     difficulty: "Easy",
     trainer: null,
@@ -102,7 +99,6 @@ const events = [
     name: "Evening Sprints",
     location: "Park",
     date: "2023-08-28",
-    time: "13:00",
     distance: "2",
     difficulty: "Medium",
     trainer: null,
@@ -156,7 +152,6 @@ databaseConnector(databaseURL)
     }
   })
   .then(async () => {
-
     for (const user of users) {
       user.password = await hashString(user.password);
     }
