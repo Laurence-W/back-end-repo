@@ -4,10 +4,10 @@ const EventSchema = new mongoose.Schema({
   name: String,
   location: String,
   date: Date,
-  time: String,
   distance: String,
   difficulty: String,
-  trainer: { type: mongoose.Types.ObjectId, ref: "User" },
+  // trainer: { type: mongoose.Types.ObjectId, ref: "User" },
+  trainer: String,
 });
 
 const Event = mongoose.model("Event", EventSchema);
