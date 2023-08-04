@@ -31,7 +31,7 @@ const extractJwtData = async (request, response, next) => {
     if (!suppliedToken) {
         let error = new Error("Error within split token");
         error.statusCode = 500;
-        next(error)
+        next(error);
     } else {
         let userJWTverified = jwt.verify(suppliedToken, process.env.JWT_SECRET, {complete: true});
         let decodedJwt = decryptString(userJWTverified.payload.data);

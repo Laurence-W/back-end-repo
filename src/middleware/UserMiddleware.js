@@ -61,10 +61,25 @@ const loginMiddleware = async (request, response, next) => {
     }
 }
 
+const updatePasswordCheck = async (request, response, next) => {
+
+    if(request.body.password === null){
+        delete request.body.password;
+        next();
+    } else if (request.body.password.length < 8) {
+        let error = new Error("Password too short, please enter 8 characters or more");
+        error.statusCode = 400;
+        next(error);
+    } else {
+        next();
+    }
+}
+
 
 module.exports = {  
     checkUserFields,
     checkValidEmail,
     checkPasswordLength,
-    loginMiddleware
+    loginMiddleware,
+    updatePasswordCheck
 };
