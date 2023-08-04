@@ -27,6 +27,28 @@ eventsRouter.get("/users", async (req, res) => {
   }
 });
 
+eventsRouter.get("/userbookings/:username", async (req, res) => {
+  //find user by username, once we have auth, this can be taken from the token
+  try {
+    const { username } = req.params;
+    let user = await User.findOne({ username: username }).exec();
+    let userbookings = user.bookings;
+    let eventList = [];
+
+    for (let booking of userbookings) {
+      let event = await Event.findById(booking);
+      eventList.push(event);
+    }
+
+    console.log(userbookings);
+    console.log(eventList);
+    res.status(201).json(userbookings);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
 // return the details for a single event
 eventsRouter.get("/by-id/:id", async (req, res) => {
   try {
