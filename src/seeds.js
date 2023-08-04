@@ -190,8 +190,6 @@ databaseConnector(databaseURL)
     for (const event of events) {
       event.trainer = users[3].username;
     }
-    // Then save the events to the database.
-    let eventsCreated = await Event.insertMany(events);
     
     for (const user of users) {
       user.password = await hashString(user.password);
