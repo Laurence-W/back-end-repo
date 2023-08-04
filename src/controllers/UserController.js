@@ -65,8 +65,6 @@ const createUser = async (request, response) => {
 
 // Function to log user in and return valid userJWT to client
 const loginUser = async (request, response) => {
-
-=======
     try {
         let savedUser = await User.findOne({email: request.body.email}).exec()
 
