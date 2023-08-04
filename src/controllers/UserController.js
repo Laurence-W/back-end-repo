@@ -146,8 +146,21 @@ const deleteAccount = async (request, response) => {
 const getAllUsers = async (request, response) => {
   try {
     let userList = await User.find({}).exec();
+    let resultList = [];
+    let userObject = {};
+    for (singleUser of userList) {
+        userObject = {
+            firstName: singleUser.firstName,
+            lastName: singleUser.lastName,
+            userName: singleUser.username,
+            email: singleUser.email,
+            isTrainer: "" + singleUser.isTrainer
+        }
+        resultList.push(userObject);
+    }
+    console.log(resultList)
 
-    response.json(userList);
+    response.json(resultList);
   } catch (error) {
     console.log(`Error occurred within route: \n ${error}`);
     // response.status(400).json({message: "Error occurred while fetching data"})
