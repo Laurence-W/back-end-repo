@@ -63,7 +63,7 @@ router.post(
 );
 
 // Route for user login
-router.post("/login", loginMiddleware, handleErrors, handleErrors, loginUser);
+router.post("/login", loginMiddleware, handleErrors, loginUser);
 
 // Route for user to edit their details
 router.put(
