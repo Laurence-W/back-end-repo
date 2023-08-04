@@ -27,22 +27,44 @@ eventsRouter.get("/users", async (req, res) => {
   }
 });
 
+// Get a list of user bookings
 eventsRouter.get("/userbookings/:username", async (req, res) => {
-  //find user by username, once we have auth, this can be taken from the token
   try {
     const { username } = req.params;
     let user = await User.findOne({ username: username }).exec();
-    let userbookings = user.bookings;
+    let userBookings = user.bookings;
     let eventList = [];
 
-    for (let booking of userbookings) {
+    for (let booking of userBookings) {
       let event = await Event.findById(booking);
       eventList.push(event);
     }
 
-    console.log(userbookings);
+    console.log(userBookings);
     console.log(eventList);
-    res.status(201).json(userbookings);
+    res.status(201).json(eventList);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
+// Get a list of user's completed runs'
+eventsRouter.get("/usercompleted/:username", async (req, res) => {
+  try {
+    const { username } = req.params;
+    let user = await User.findOne({ username: username }).exec();
+    let userCompleted = user.completedRuns;
+    let completedList = [];
+
+    for (let event of userCompleted) {
+      let completedRun = await Event.findById(event);
+      completedList.push(completedRun);
+    }
+
+    console.log(userCompleted);
+    console.log(completedList);
+    res.status(201).json(completedList);
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
