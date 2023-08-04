@@ -158,7 +158,6 @@ const getAllUsers = async (request, response) => {
         }
         resultList.push(userObject);
     }
-    console.log(resultList)
 
     response.json(resultList);
   } catch (error) {
