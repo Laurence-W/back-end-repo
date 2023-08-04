@@ -101,7 +101,7 @@ eventsRouter.put("/bookuser", async (req, res) => {
 
     const user = await User.findOneAndUpdate(
       { _id: userid },
-      { $push: { bookings: eventid } }
+      { $addToSet: { bookings: eventid } }
     );
     await user.save();
     res.send({ message: "Event Booked" });
