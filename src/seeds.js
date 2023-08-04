@@ -20,6 +20,8 @@ const users = [
     password: "User1Pass",
     isAdmin: 0,
     isTrainer: 0,
+    bookings: [],
+    completedRuns: [],
   },
   {
     firstName: "User2",
@@ -29,6 +31,8 @@ const users = [
     password: "User2Pass",
     isAdmin: 0,
     isTrainer: 0,
+    bookings: [],
+    completedRuns: [],
   },
   {
     firstName: "User3",
@@ -38,6 +42,8 @@ const users = [
     password: "User3Pass",
     isAdmin: 0,
     isTrainer: 0,
+    bookings: [],
+    completedRuns: [],
   },
   {
     firstName: "Trainer1",
@@ -47,6 +53,8 @@ const users = [
     password: "Trainer1Pass",
     isAdmin: 0,
     isTrainer: 1,
+    bookings: [],
+    completedRuns: [],
   },
   {
     firstName: "Trainer2",
@@ -56,6 +64,8 @@ const users = [
     password: "Trainer2Pass",
     isAdmin: 0,
     isTrainer: 1,
+    bookings: [],
+    completedRuns: [],
   },
   {
     firstName: "Admin1",
@@ -65,6 +75,8 @@ const users = [
     password: "UAdmin1Pass",
     isAdmin: 1,
     isTrainer: 0,
+    bookings: [],
+    completedRuns: [],
   },
 ];
 
@@ -72,9 +84,17 @@ const users = [
 // trainer is added later from usersCreated = await User.insertMany(users);
 const events = [
   {
+    name: "Sunrise Run",
+    location: "Shop Road",
+    date: "2023-06-01",
+    distance: "3.5",
+    difficulty: "Medium",
+    trainer: null,
+  },
+  {
     name: "Afternoon Jog",
     location: "Beach Path",
-    date: "2023-07-21",
+    date: "2023-08-01",
     distance: "3.5",
     difficulty: "Medium",
     trainer: null,
@@ -82,7 +102,7 @@ const events = [
   {
     name: "Morning Marathon",
     location: "Beach Path",
-    date: "2023-07-28",
+    date: "2023-08-10",
     distance: "42",
     difficulty: "Hard",
     trainer: null,
@@ -90,7 +110,7 @@ const events = [
   {
     name: "Saturday Run",
     location: "Beach Path",
-    date: "2023-08-19",
+    date: "2023-08-15",
     distance: "4",
     difficulty: "Easy",
     trainer: null,
@@ -98,9 +118,17 @@ const events = [
   {
     name: "Evening Sprints",
     location: "Park",
-    date: "2023-08-28",
+    date: "2023-08-20",
     distance: "2",
     difficulty: "Medium",
+    trainer: null,
+  },
+  {
+    name: "Late Night Recovery Run",
+    location: "Shop Road",
+    date: "2023-08-30",
+    distance: "2",
+    difficulty: "Easy",
     trainer: null,
   },
 ];
@@ -156,15 +184,29 @@ databaseConnector(databaseURL)
       user.password = await hashString(user.password);
     }
 
-    // Save the users to the database.
-    let usersCreated = await User.insertMany(users);
-
     // Add trainer to events (currently usersCreated[3] is a trainer)
     for (const event of events) {
-      event.trainer = usersCreated[3].id;
+      event.trainer = users[3].username;
     }
+
     // Then save the events to the database.
     let eventsCreated = await Event.insertMany(events);
+
+    // Add some created event ids to the user's bookings array
+    for (const user of users) {
+      user.bookings.push(eventsCreated[2].id);
+      user.bookings.push(eventsCreated[3].id);
+      user.bookings.push(eventsCreated[4].id);
+    }
+
+    //Add some created event ids to the user's completedRuns array
+    for (const user of users) {
+      user.completedRuns.push(eventsCreated[0].id);
+      user.completedRuns.push(eventsCreated[1].id);
+    }
+
+    // Save the users to the database.
+    let usersCreated = await User.insertMany(users);
 
     // Log all data created.
     console.log(
