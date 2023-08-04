@@ -18,6 +18,7 @@ const users = [
     username: "User1name",
     email: "User1email@email.com",
     password: "User1Pass",
+    bookings: [],
     isAdmin: 0,
     isTrainer: 0,
   },
@@ -27,6 +28,7 @@ const users = [
     username: "User2name",
     email: "User2email@email.com",
     password: "User2Pass",
+    bookings: [],
     isAdmin: 0,
     isTrainer: 0,
   },
@@ -36,6 +38,7 @@ const users = [
     username: "User3name",
     email: "User3email@email.com",
     password: "User3Pass",
+    bookings: [],
     isAdmin: 0,
     isTrainer: 0,
   },
@@ -45,6 +48,7 @@ const users = [
     username: "Trainer1name",
     email: "Trainer1email@email.com",
     password: "Trainer1Pass",
+    bookings: [],
     isAdmin: 0,
     isTrainer: 1,
   },
@@ -54,6 +58,7 @@ const users = [
     username: "Trainer2name",
     email: "Trainer2email@email.com",
     password: "Trainer2Pass",
+    bookings: [],
     isAdmin: 0,
     isTrainer: 1,
   },
@@ -152,19 +157,24 @@ databaseConnector(databaseURL)
     }
   })
   .then(async () => {
+    
+    // Add trainer to events (currently users[3] is a trainer)
+    for (const event of events) {
+      event.trainer = users[3].username;
+    }
+    // Then save the events to the database.
+    let eventsCreated = await Event.insertMany(events);
+    
     for (const user of users) {
       user.password = await hashString(user.password);
     }
 
+    users[1].bookings = eventsCreated[1].id
+    users[0].bookings = [eventsCreated[0].id, eventsCreated[2].id]
+  
+
     // Save the users to the database.
     let usersCreated = await User.insertMany(users);
-
-    // Add trainer to events (currently usersCreated[3] is a trainer)
-    for (const event of events) {
-      event.trainer = usersCreated[3].id;
-    }
-    // Then save the events to the database.
-    let eventsCreated = await Event.insertMany(events);
 
     // Log all data created.
     console.log(
