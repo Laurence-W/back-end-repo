@@ -38,6 +38,7 @@ const createUser = async (request, response) => {
     password: hashedPassword,
     isAdmin: false,
     isTrainer: false,
+    bookings: [],
   });
 
   // Generate JWT to send back to client for authentication in other parts of the application
@@ -65,24 +66,28 @@ const createUser = async (request, response) => {
 
 // Function to log user in and return valid userJWT to client
 const loginUser = async (request, response) => {
-    try {
-        let savedUser = await User.findOne({email: request.body.email}).exec()
+  try {
+    let savedUser = await User.findOne({ email: request.body.email }).exec();
 
-        let encryptedToken = await generateUserJWT({
-            userID: savedUser.id,
-            username: savedUser.username,
-            email: savedUser.email,
-            isAdmin: savedUser.isAdmin,
-            isTrainer: savedUser.isTrainer 
-        })
+    let encryptedToken = await generateUserJWT({
+      userID: savedUser.id,
+      username: savedUser.username,
+      email: savedUser.email,
+      isAdmin: savedUser.isAdmin,
+      isTrainer: savedUser.isTrainer,
+    });
 
-        response.status(200).json({message: "successful login", token: encryptedToken, trainer: savedUser.isTrainer, admin: savedUser.isAdmin})
-    } catch (error) {
-        console.log(`Error occurred: \n ${error}`);
-        throw error;
-    }
-}
-
+    response.status(200).json({
+      message: "successful login",
+      token: encryptedToken,
+      trainer: savedUser.isTrainer,
+      admin: savedUser.isAdmin,
+    });
+  } catch (error) {
+    console.log(`Error occurred: \n ${error}`);
+    throw error;
+  }
+};
 
 // Function to allow user to update their details
 const editUser = async (request, response) => {

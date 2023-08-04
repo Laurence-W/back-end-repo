@@ -3,6 +3,7 @@ const eventsRouter = express.Router();
 const mongoose = require("mongoose");
 
 const { Event } = require("../models/EventModel");
+const { User } = require("../models/UserModel");
 
 // See all events, only admin should have this.
 eventsRouter.get("/", async (req, res) => {
@@ -88,6 +89,22 @@ eventsRouter.put("/change-event/:id", async (req, res) => {
     event.trainer = req.body.trainer;
     await event.save();
     res.send({ message: "Event Updated" });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+});
+
+eventsRouter.put("/bookuser", async (req, res) => {
+  try {
+    const userid = req.body.userid;
+    const eventid = req.body.eventid;
+
+    const user = await User.findOneAndUpdate(
+      { _id: userid },
+      { $push: { bookings: eventid } }
+    );
+    await user.save();
+    res.send({ message: "Event Booked" });
   } catch (error) {
     res.status(500).json(error);
   }
