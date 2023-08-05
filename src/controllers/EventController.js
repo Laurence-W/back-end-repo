@@ -22,10 +22,9 @@ const getEventsUsers = async (req, res) => {
   }
 };
 
-const getUsersBookings = async (req, res) => {
+const getUsersBookings = async (request, res) => {
   try {
-    const { username } = req.params;
-    let user = await User.findOne({ username: username }).exec();
+    let user = await User.findOne({ _id: request.userID }).exec();
     let userBookings = user.bookings;
     let eventList = [];
 
@@ -43,10 +42,9 @@ const getUsersBookings = async (req, res) => {
   }
 };
 
-const getUsersCompleted = async (req, res) => {
+const getUsersCompleted = async (request, res) => {
   try {
-    const { username } = req.params;
-    let user = await User.findOne({ username: username }).exec();
+    let user = await User.findOne({ _id: request.userID }).exec();
     let userCompleted = user.completedRuns;
     let completedList = [];
 
@@ -128,15 +126,20 @@ const changeEventById = async (req, res) => {
   }
 };
 
-const createBooking = async (req, res) => {
+const createBooking = async (request, res) => {
   try {
-    const userid = req.body.userid;
-    const eventid = req.body.eventid;
+    // const userid = req.body.userid;
+    const eventid = request.body.eventid;
 
-    const user = await User.findOneAndUpdate(
-      { _id: userid },
+    let user = await User.findOneAndUpdate(
+      { _id: request.userID },
       { $addToSet: { bookings: eventid } }
-    );
+    ).exec();
+    // const user = await User.findOneAndUpdate(
+    //   { _id: userid },
+    //   { $addToSet: { bookings: eventid } }
+    // );
+
     await user.save();
     res.send({ message: "Event Booked" });
   } catch (error) {
@@ -144,13 +147,12 @@ const createBooking = async (req, res) => {
   }
 };
 
-const removeBooking = async (req, res) => {
+const removeBooking = async (request, res) => {
   try {
-    const userid = req.body.userid;
-    const eventid = req.body.eventid;
+    const eventid = request.body.eventid;
 
-    const user = await User.findOneAndUpdate(
-      { _id: userid },
+    let user = await User.findOneAndUpdate(
+      { _id: request.userID },
       { $pull: { bookings: eventid } }
     );
     await user.save();

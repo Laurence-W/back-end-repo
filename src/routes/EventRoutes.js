@@ -6,6 +6,13 @@ const { Event } = require("../models/EventModel");
 const { User } = require("../models/UserModel");
 
 const {
+  extractJwtData,
+  verifyAndValidateUserJWT,
+  checkAdminOrTrainerStatus,
+} = require("../middleware/AuthMiddleware");
+const { handleErrors } = require("../middleware/ErrorHandler");
+
+const {
   getEvents,
   getEventsUsers,
   getUsersBookings,
@@ -26,30 +33,68 @@ eventsRouter.get("/all", getEvents);
 eventsRouter.get("/users", getEventsUsers);
 
 // Get a list of user bookings
-eventsRouter.get("/userbookings/:username", getUsersBookings);
+eventsRouter.get(
+  "/userbookings",
+  verifyAndValidateUserJWT,
+  extractJwtData,
+  getUsersBookings
+);
 
 // Get a list of user's completed runs'
-eventsRouter.get("/usercompleted/:username", getUsersCompleted);
+eventsRouter.get(
+  "/usercompleted",
+  verifyAndValidateUserJWT,
+  extractJwtData,
+  getUsersCompleted
+);
 
 // return the details for a single event
 eventsRouter.get("/by-id/:id", getEventById);
 
 // Create a new event, no trainer validation yet.
-eventsRouter.post("/", createEvent);
+eventsRouter.post(
+  "/",
+  verifyAndValidateUserJWT,
+  extractJwtData,
+  checkAdminOrTrainerStatus,
+  createEvent
+);
 
 // edit a single event
-eventsRouter.put("/change-event/:id", changeEventById);
+eventsRouter.put(
+  "/change-event/:id",
+  verifyAndValidateUserJWT,
+  extractJwtData,
+  checkAdminOrTrainerStatus,
+  changeEventById
+);
 
 // add an event to a user's bookings
-eventsRouter.put("/bookuser", createBooking);
+eventsRouter.put(
+  "/bookuser",
+  verifyAndValidateUserJWT,
+  extractJwtData,
+  createBooking
+);
 
 // remove an event from a user's bookings
-eventsRouter.put("/removebooking", removeBooking);
+eventsRouter.put(
+  "/removebooking",
+  verifyAndValidateUserJWT,
+  extractJwtData,
+  removeBooking
+);
 
 // remove an event from a user's bookings
 eventsRouter.put("/completebooking", userCompleteEvent);
 
 // for admin/trainer to remove an event
-eventsRouter.delete("/:id", deleteEvent);
+eventsRouter.delete(
+  "/:id",
+  verifyAndValidateUserJWT,
+  extractJwtData,
+  checkAdminOrTrainerStatus,
+  deleteEvent
+);
 
 module.exports = eventsRouter;
