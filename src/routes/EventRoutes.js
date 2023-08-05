@@ -14,7 +14,7 @@ const {
   createEvent,
   changeEventById,
   createBooking,
-  deleteBooking,
+  deleteEvent,
 } = require("../controllers/EventController");
 
 // See all events, only admin should have this.
@@ -42,6 +42,6 @@ eventsRouter.put("/change-event/:id", changeEventById);
 eventsRouter.put("/bookuser", createBooking);
 
 // for admin/trainer to remove an event
-eventsRouter.delete("/:id", deleteBooking);
+eventsRouter.delete("/:id", deleteEvent);
 
 module.exports = eventsRouter;

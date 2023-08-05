@@ -144,7 +144,7 @@ const createBooking = async (req, res) => {
   }
 };
 
-const deleteBooking = async (req, res) => {
+const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
     const event = await Event.findByIdAndDelete(id);
@@ -167,5 +167,5 @@ module.exports = {
   createEvent,
   changeEventById,
   createBooking,
-  deleteBooking,
+  deleteEvent,
 };
