@@ -194,7 +194,7 @@ const deleteEvent = async (req, res) => {
       return res.status(404).json(`No event found with id: ${id}`);
     }
 
-    res.status(200).send("Event deleted");
+    res.status(200).json("Event deleted");
   } catch (err) {
     res.status(500).json(err);
   }

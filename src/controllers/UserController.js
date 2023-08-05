@@ -233,7 +233,7 @@ const adminDeleteUser = async (request, response) => {
       if (!removedUser) {
         return response
           .status(404)
-          .json({ message: "User not found, check username" });
+          .json({ message: "User not found, check username", token: request.newToken });
       }
       return response.status(200).json({ message: "User removed" });
     }
