@@ -160,6 +160,30 @@ const removeBooking = async (req, res) => {
   }
 };
 
+const userCompleteEvent = async (req, res) => {
+  try {
+    const userid = req.body.userid;
+    const eventid = req.body.eventid;
+
+    const user = await User.findOneAndUpdate(
+      { _id: userid },
+      { $pull: { bookings: eventid } }
+    );
+
+    await user.save();
+
+    const usercomplete = await User.findOneAndUpdate(
+      { _id: userid },
+      { $addToSet: { completedRuns: eventid } }
+    );
+
+    await usercomplete.save();
+    res.send({ message: "Event Completed!" });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -184,5 +208,6 @@ module.exports = {
   changeEventById,
   createBooking,
   removeBooking,
+  userCompleteEvent,
   deleteEvent,
 };
