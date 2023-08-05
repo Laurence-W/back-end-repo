@@ -144,6 +144,22 @@ const createBooking = async (req, res) => {
   }
 };
 
+const removeBooking = async (req, res) => {
+  try {
+    const userid = req.body.userid;
+    const eventid = req.body.eventid;
+
+    const user = await User.findOneAndUpdate(
+      { _id: userid },
+      { $pull: { bookings: eventid } }
+    );
+    await user.save();
+    res.send({ message: "Booking Removed" });
+  } catch (error) {
+    res.status(500).json(error);
+  }
+};
+
 const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
@@ -167,5 +183,6 @@ module.exports = {
   createEvent,
   changeEventById,
   createBooking,
+  removeBooking,
   deleteEvent,
 };

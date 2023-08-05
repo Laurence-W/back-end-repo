@@ -14,6 +14,7 @@ const {
   createEvent,
   changeEventById,
   createBooking,
+  removeBooking,
   deleteEvent,
 } = require("../controllers/EventController");
 
@@ -40,6 +41,9 @@ eventsRouter.put("/change-event/:id", changeEventById);
 
 // add an event to a user's bookings
 eventsRouter.put("/bookuser", createBooking);
+
+// remove an event from a user's bookings
+eventsRouter.put("/removebooking", removeBooking);
 
 // for admin/trainer to remove an event
 eventsRouter.delete("/:id", deleteEvent);
