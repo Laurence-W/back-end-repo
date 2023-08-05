@@ -89,6 +89,7 @@ app.use((error, request, response, next) => {
   };
 
   console.log("Request received: \n" + JSON.stringify(importantInformation, null, 4));
+  console.log(error)
   response.status(error.statusCode).json(error.message);
 })
 
