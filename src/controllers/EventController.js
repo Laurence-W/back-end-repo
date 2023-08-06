@@ -110,16 +110,8 @@ const createEvent = async (req, res) => {
 const changeEventById = async (req, res) => {
   try {
     const { id } = req.params;
-    const event = await Event.findById(id);
-    event.name = req.body.name;
-    event.location = req.body.location;
-    event.date = req.body.date;
-    event.time = req.body.time;
-    event.distance = req.body.distance;
-    event.difficulty = req.body.difficulty;
-    event.trainer = req.body.trainer;
-    await event.save();
-    res.send({ message: "Event Updated" });
+    await Event.findByIdAndUpdate(id, req.body, {returnDocument: "after"});
+    res.send({ message: "Event saved" });
   } catch (error) {
     res.status(500).json(error);
   }
@@ -188,7 +180,7 @@ const userCompleteEvent = async (req, res) => {
 const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
-    const event = await Event.findByIdAndDelete(id);
+    let event = await Event.findByIdAndDelete(id).exec();
     if (!event) {
       return res.status(404).json(`No event found with id: ${id}`);
     }
