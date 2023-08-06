@@ -58,6 +58,7 @@ const checkAdminStatus = async (request, response, next) => {
   }
 };
 
+// Middleware to check if user is trainer or admin, to allow for protected routes
 const checkAdminOrTrainerStatus = async (request, response, next) => {
   let adminStatus = request.isAdmin;
   let trainerStatus = request.isTrainer;

@@ -2,6 +2,7 @@ const { User } = require("../models/UserModel");
 const { Event } = require("../models/EventModel");
 const mongoose = require("mongoose");
 
+//This controller gets all events and returns them sorted by date. Viewable by all.
 const getEvents = async (req, res) => {
   try {
     const result = await Event.find({}).sort({ date: 1 });
@@ -11,6 +12,7 @@ const getEvents = async (req, res) => {
   }
 };
 
+//This controller gets only future events and returns them sorted by date. Viewable by users.
 const getEventsUsers = async (req, res) => {
   try {
     const result = await Event.find({
@@ -22,6 +24,7 @@ const getEventsUsers = async (req, res) => {
   }
 };
 
+//This controller gets the users booked eventids and returns a list of the full event objects. Viewable by users.
 const getUsersBookings = async (request, res) => {
   try {
     let user = await User.findOne({ _id: request.userID }).exec();
@@ -42,6 +45,8 @@ const getUsersBookings = async (request, res) => {
   }
 };
 
+
+//This controller gets the users completed eventids and returns a list of the full event objects. Viewable by users.
 const getUsersCompleted = async (request, res) => {
   try {
     let user = await User.findOne({ _id: request.userID }).exec();
@@ -61,6 +66,7 @@ const getUsersCompleted = async (request, res) => {
   }
 };
 
+//This controller gets an events information from it's ID. Viewable by all.
 const getEventById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -75,6 +81,7 @@ const getEventById = async (req, res) => {
   }
 };
 
+//This controller creates a new event from the info passed in body. Only shown to trainers and admin and checked on the backend.
 const createEvent = async (req, res) => {
   const event = new Event({
     _id: new mongoose.Types.ObjectId(),
@@ -107,6 +114,7 @@ const createEvent = async (req, res) => {
   }
 };
 
+//This controller edits an event from the info passed in body. Only shown to trainers and admin and checked on the backend.
 const changeEventById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -117,9 +125,9 @@ const changeEventById = async (req, res) => {
   }
 };
 
+//This controller creates a booking within a users booking array. Usable by all.
 const createBooking = async (request, res) => {
   try {
-    // const userid = req.body.userid;
     const eventid = request.body.eventid;
 
     let user = await User.findOneAndUpdate(
@@ -138,6 +146,7 @@ const createBooking = async (request, res) => {
   }
 };
 
+//This controller removes a booking within a users booking array. Usable by all.
 const removeBooking = async (request, res) => {
   try {
     const eventid = request.body.eventid;
@@ -153,6 +162,7 @@ const removeBooking = async (request, res) => {
   }
 };
 
+//This controller removes a booking within a users booking array and places that eventid into the completed run list to track runs completed. Usable by all.
 const userCompleteEvent = async (req, res) => {
   try {
     const userid = req.body.userid;
@@ -177,6 +187,7 @@ const userCompleteEvent = async (req, res) => {
   }
 };
 
+//This controller finds and removes an event from the event id. Shown only to trainers and admin and checked on the backend.
 const deleteEvent = async (req, res) => {
   try {
     const { id } = req.params;
