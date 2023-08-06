@@ -26,7 +26,7 @@ const {
   deleteEvent,
 } = require("../controllers/EventController");
 
-// See all events, only admin should have this.
+// See all events.
 eventsRouter.get("/all", getEvents);
 
 // See only future events
