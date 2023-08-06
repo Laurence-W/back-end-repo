@@ -4,7 +4,7 @@ const EventSchema = new mongoose.Schema({
   name: String,
   location: String,
   date: Date,
-  distance: String,
+  distance: Number,
   difficulty: String,
   // trainer: { type: mongoose.Types.ObjectId, ref: "User" },
   trainer: String,

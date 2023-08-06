@@ -46,12 +46,11 @@ const getUsersCompleted = async (request, res) => {
   try {
     let user = await User.findOne({ _id: request.userID }).exec();
     let userCompleted = user.completedRuns;
-    let completedList = [];
 
-    for (let event of userCompleted) {
-      let completedRun = await Event.findById(event);
-      completedList.push(completedRun);
-    }
+    let completedList = await Event.find({
+      _id: { $in: userCompleted },
+    }).exec();
+
 
     console.log(userCompleted);
     console.log(completedList);

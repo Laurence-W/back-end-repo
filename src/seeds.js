@@ -18,7 +18,6 @@ const users = [
     username: "User1name",
     email: "User1email@email.com",
     password: "User1Pass",
-    bookings: [],
     isAdmin: 0,
     isTrainer: 0,
     bookings: [],
@@ -30,7 +29,6 @@ const users = [
     username: "User2name",
     email: "User2email@email.com",
     password: "User2Pass",
-    bookings: [],
     isAdmin: 0,
     isTrainer: 0,
     bookings: [],
@@ -42,7 +40,6 @@ const users = [
     username: "User3name",
     email: "User3email@email.com",
     password: "User3Pass",
-    bookings: [],
     isAdmin: 0,
     isTrainer: 0,
     bookings: [],
@@ -54,7 +51,6 @@ const users = [
     username: "Trainer1name",
     email: "Trainer1email@email.com",
     password: "Trainer1Pass",
-    bookings: [],
     isAdmin: 0,
     isTrainer: 1,
     bookings: [],
@@ -66,7 +62,6 @@ const users = [
     username: "Trainer2name",
     email: "Trainer2email@email.com",
     password: "Trainer2Pass",
-    bookings: [],
     isAdmin: 0,
     isTrainer: 1,
     bookings: [],
@@ -92,7 +87,7 @@ const events = [
     name: "Sunrise Run",
     location: "Shop Road",
     date: "2023-06-01",
-    distance: "3.5",
+    distance: 3.5,
     difficulty: "Medium",
     trainer: null,
   },
@@ -100,7 +95,7 @@ const events = [
     name: "Afternoon Jog",
     location: "Beach Path",
     date: "2023-08-01",
-    distance: "3.5",
+    distance: 3.5,
     difficulty: "Medium",
     trainer: null,
   },
@@ -108,7 +103,7 @@ const events = [
     name: "Morning Marathon",
     location: "Beach Path",
     date: "2023-08-10",
-    distance: "42",
+    distance: 42,
     difficulty: "Hard",
     trainer: null,
   },
@@ -116,7 +111,7 @@ const events = [
     name: "Saturday Run",
     location: "Beach Path",
     date: "2023-08-15",
-    distance: "4",
+    distance: 4,
     difficulty: "Easy",
     trainer: null,
   },
@@ -124,7 +119,7 @@ const events = [
     name: "Evening Sprints",
     location: "Park",
     date: "2023-08-20",
-    distance: "2",
+    distance: 2,
     difficulty: "Medium",
     trainer: null,
   },
@@ -132,7 +127,7 @@ const events = [
     name: "Late Night Recovery Run",
     location: "Shop Road",
     date: "2023-08-30",
-    distance: "2",
+    distance: 2,
     difficulty: "Easy",
     trainer: null,
   },
@@ -185,12 +180,11 @@ databaseConnector(databaseURL)
     }
   })
   .then(async () => {
-    
     // Add trainer to events (currently users[3] is a trainer)
     for (const event of events) {
       event.trainer = users[3].username;
     }
-    
+
     for (const user of users) {
       user.password = await hashString(user.password);
     }
