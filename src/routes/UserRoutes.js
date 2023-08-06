@@ -41,7 +41,7 @@ router.get(
 );
 
 // Router to get all users, only admin can access this route
-router.get("/allTrainers", handleErrors, getAllTrainers);
+router.get("/allTrainers", verifyAndValidateUserJWT, handleErrors, getAllTrainers);
 
 // Router to get single user based from USER_ID from JWT sent in request headers
 router.get(
